@@ -1,0 +1,8 @@
+# Observable message names O for the A/B example of the article
+# (examples/ab-1.rebeca and examples/ab-2.rebeca).
+#
+# One entry per message name, comma- or newline-separated.  '#' starts a
+# comment.  A bare name selects every message server with that name, which is
+# what Definition "Observable RDG Slice" says; write Class.name or rebec.name
+# to narrow it to one reactive class.
+m1

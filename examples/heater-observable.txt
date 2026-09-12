@@ -1,0 +1,8 @@
+# Observable messages for the heater models (examples/1-heater.rebeca and
+# examples/2-heater.rebeca), matching the slice highlighted in the reference
+# main-samples/1-rdg.dot and 2-rdg.dot.
+#
+# Receiver.message, optionally pinning the message server's parameter types.
+# The receiver may be a reactive class (Controller) or a rebec declared in
+# main (controller) -- matched case-insensitively.
+Controller.getSense(int), HC_Unit.activateh(), HC_Unit.switchoff(), time

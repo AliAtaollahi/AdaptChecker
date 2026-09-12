@@ -1,0 +1,23 @@
+// Figure 1 of the article: a simple Timed Rebeca model M_AB.
+reactiveclass A(10){
+  knownrebecs{ B b; }
+  A(){ self.m1(true); }
+  msgsrv m1(boolean z){
+    if (z) b.m2(); }}
+
+reactiveclass B(10){
+  knownrebecs{ A a; }
+  statevars {
+    boolean x, y;}
+  B(){ x = true; }
+  msgsrv m2(){
+    y = x;
+    x = !x;
+    if (y)
+      self.m2() after (5);
+    else
+      a.m1(x || y);}}
+
+main {
+	A a(b):();
+	B b(a):();}

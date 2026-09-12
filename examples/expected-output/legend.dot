@@ -1,0 +1,60 @@
+digraph "rdg-legend" {
+compound=true;
+node [shape="rect"];
+
+subgraph "cluster_node_legend" {
+  label="Node kinds";
+  "n_C" [shape="ellipse", style="filled", fillcolor="yellow", label=<N_C<BR/>reactiveclass C>]
+  "n_E" [style="filled", fillcolor="yellow", label=<N_E<BR/>msgsrv m(int x)>]
+  "n_Eobs" [style="filled", fillcolor="orange", label=<N_E<BR/>observable msgsrv>]
+  "n_Emain" [style="filled", fillcolor="green", label=<N_E<BR/>main>]
+  "n_SV" [style="filled", fillcolor="yellow", label=<N_SV<BR/>sv_x>]
+  "n_FP" [style="filled", fillcolor="yellow", label=<N_FP<BR/>x = x_in>]
+  "n_AP" [style="filled", fillcolor="yellow", label=<N_AP<BR/>x_in = e>]
+  "n_S" [style="filled", fillcolor="yellow", label=<N_S<BR/>x = e>]
+  "n_out" [label=<outside the slice<BR/>(not filled)>]
+  "n_C" -> "n_E" -> "n_Eobs" -> "n_Emain" -> "n_SV" -> "n_FP" -> "n_AP" -> "n_S" -> "n_out" [style="invis"];
+}
+
+subgraph "cluster_edge_legend" {
+  label="Dependency edges";
+
+  node [shape="plaintext"];
+  "legend_member_text" [label="member dependence"];
+  "legend_control_text" [label="control dependence"];
+  "legend_data_text" [label="data dependence"];
+  "legend_intra-rebec_text" [label="intra-rebec dependence"];
+  "legend_activation_text" [label="activation dependence"];
+  "legend_binding_text" [label="binding dependence"];
+
+  "legend_member_start" [shape="point", width=0.03, label=""];
+  "legend_member_end" [shape="point", width=0.03, label=""];
+  "legend_control_start" [shape="point", width=0.03, label=""];
+  "legend_control_end" [shape="point", width=0.03, label=""];
+  "legend_data_start" [shape="point", width=0.03, label=""];
+  "legend_data_end" [shape="point", width=0.03, label=""];
+  "legend_intra-rebec_start" [shape="point", width=0.03, label=""];
+  "legend_intra-rebec_end" [shape="point", width=0.03, label=""];
+  "legend_activation_start" [shape="point", width=0.03, label=""];
+  "legend_activation_end" [shape="point", width=0.03, label=""];
+  "legend_binding_start" [shape="point", width=0.03, label=""];
+  "legend_binding_end" [shape="point", width=0.03, label=""];
+
+  { rank=same; "legend_member_text"; "legend_member_start"; "legend_member_end"; }
+  { rank=same; "legend_control_text"; "legend_control_start"; "legend_control_end"; }
+  { rank=same; "legend_data_text"; "legend_data_start"; "legend_data_end"; }
+  { rank=same; "legend_intra-rebec_text"; "legend_intra-rebec_start"; "legend_intra-rebec_end"; }
+  { rank=same; "legend_activation_text"; "legend_activation_start"; "legend_activation_end"; }
+  { rank=same; "legend_binding_text"; "legend_binding_start"; "legend_binding_end"; }
+
+  "legend_member_start" -> "legend_member_end" [color="green"];
+  "legend_control_start" -> "legend_control_end";
+  "legend_data_start" -> "legend_data_end" [color="blue"];
+  "legend_intra-rebec_start" -> "legend_intra-rebec_end" [color="blue", style="dotted"];
+  "legend_activation_start" -> "legend_activation_end";
+  "legend_binding_start" -> "legend_binding_end" [color="purple"];
+
+  "legend_member_text" -> "legend_control_text" -> "legend_data_text" -> "legend_intra-rebec_text" -> "legend_activation_text" -> "legend_binding_text"
+    [style="invis"];
+}
+}

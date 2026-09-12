@@ -1,0 +1,76 @@
+Observable RDG slice comparison
+===============================
+
+left  model : examples/1-heater.rebeca
+right model : examples/2-heater.rebeca
+observables : examples/heater-observable.txt
+              O = {Controller.getSense, HC_Unit.activateh, HC_Unit.switchoff}
+              ignored (not message names): time
+options     : defaults
+
+VERDICT
+-------
+
+  Slice(RDG(left), O) == Slice(RDG(right), O)
+
+  The two observable slices are EQUIVALENT.
+  By the soundness theorem of Section 3, the two models'
+  semantic models are weak timed bisimilar with respect
+  to O, so a tiny twin built for one of them is valid for
+  the other and does not have to be regenerated.
+
+left model: examples/1-heater.rebeca
+------------------------------------
+  reactive classes : Controller, Room, Sensor, HC_Unit
+  rebecs in main   : room, controller, sensor, hc_unit
+  RDG              : 55 nodes, 83 edges
+    N_C=4, N_E=10, N_S=28, N_FP=3, N_AP=4, N_SV=6
+    E_C=39, E_D=7, E_I=10, E_M=15, E_B=4, E_A=8
+  Slice(RDG,O)     : 46 nodes, 73 edges  (83.6% of the RDG)
+  relevant variables RV : Controller.getSense.temp, Controller.heating_active, Room.outside_air_blowing, Room.regulate.v, Room.regulation, Room.temperature, Sensor.getTemp.temp
+  relevant messages  RM : activateh, getSense, getTemp, regulate, switchoff, tempchange
+  outside the slice     :
+      N_E   HC_Unit()
+      N_S   heater_on = false
+      N_S   sensedValue = 20
+      N_S   sensedValue = temp
+      N_S   heater_on = true
+      N_S   heater_on = false
+      N_S   outside_air_blowing = 0
+      N_SV  sv_sensedValue
+      N_SV  sv_heater_on
+
+right model: examples/2-heater.rebeca
+-------------------------------------
+  reactive classes : Controller, Room, Sensor, HC_Unit, Notifyer
+  rebecs in main   : room, controller, sensor, hc_unit, notifyer
+  RDG              : 68 nodes, 104 edges
+    N_C=5, N_E=13, N_S=33, N_FP=4, N_AP=6, N_SV=7
+    E_C=48, E_D=10, E_I=10, E_M=19, E_B=6, E_A=11
+  Slice(RDG,O)     : 46 nodes, 73 edges  (67.6% of the RDG)
+  relevant variables RV : Controller.getSense.temp, Controller.heating_active, Room.outside_air_blowing, Room.regulate.v, Room.regulation, Room.temperature, Sensor.getTemp.temp
+  relevant messages  RM : activateh, getSense, getTemp, regulate, switchoff, tempchange
+  outside the slice     :
+      N_AP  current_status__in = temp
+      N_AP  current_status__in = temp
+      N_C   reactiveclass Notifyer
+      N_E   HC_Unit()
+      N_E   Notifyer()
+      N_E   msgsrv Notifyer.notify
+      N_E   msgsrv Notifyer.send_signal
+      N_FP  current_status_ = current_status__in
+      N_S   heater_on = false
+      N_S   sensedValue = 20
+      N_S   sensedValue = temp
+      N_S   current_status = current_status_
+      N_S   heater_on = true
+      N_S   heater_on = false
+      N_S   self.send_signal() after(3)
+      N_S   outside_air_blowing = 0
+      N_S   Notifyer notifyer():()
+      N_S   notifyer.notify() after(0)
+      N_S   notifyer.notify() after(0)
+      N_SV  sv_sensedValue
+      N_SV  sv_heater_on
+      N_SV  sv_current_status
+

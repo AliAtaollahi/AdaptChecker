@@ -1,0 +1,260 @@
+digraph "2-heater" {
+compound=true;
+node [shape="rect"];
+
+subgraph "cluster_main" {
+  label="2-heater";
+
+  "E:main" [ style="filled", fillcolor="green", label=<1<BR/>main>]
+  "S:main.1" [ style="filled", fillcolor="yellow", label=<2<BR/>Room room(sensor):()>]
+  "S:main.2" [ style="filled", fillcolor="yellow", label=<3<BR/>Controller controller(hc_unit, notifyer):()>]
+  "S:main.3" [ style="filled", fillcolor="yellow", label=<4<BR/>Sensor sensor(room, controller):()>]
+  "S:main.4" [ style="filled", fillcolor="yellow", label=<5<BR/>HC_Unit hc_unit(room):()>]
+  "S:main.5" [ label=<6<BR/>Notifyer notifyer():()>]
+}
+
+subgraph "cluster_Controller" {
+  label="2-heater$Controller";
+
+  "C:Controller" [ shape="ellipse", style="filled", fillcolor="yellow", label=<7<BR/>reactiveclass Controller>]
+  "SV:Controller.heating_active" [ style="filled", fillcolor="yellow", label=<8<BR/>sv_heating_active>]
+  "SV:Controller.sensedValue" [ label=<9<BR/>sv_sensedValue>]
+  "E:Controller.constructor" [ style="filled", fillcolor="yellow", label=<10<BR/>Controller()>]
+  "E:Controller.getSense" [ style="filled", fillcolor="orange", label=<11<BR/>msgsrv Controller.getSense>]
+  "FP:E:Controller.getSense.temp" [ style="filled", fillcolor="yellow", label=<12<BR/>temp = temp_in>]
+  "S:E:Controller.constructor.6" [ style="filled", fillcolor="yellow", label=<13<BR/>heating_active = false>]
+  "S:E:Controller.constructor.7" [ label=<14<BR/>sensedValue = 20>]
+  "S:E:Controller.getSense.8" [ label=<15<BR/>sensedValue = temp>]
+  "S:E:Controller.getSense.9" [ style="filled", fillcolor="yellow", label=<16<BR/>if (21 &gt; temp &amp;&amp; heating_active == false)>]
+  "S:E:Controller.getSense.10" [ style="filled", fillcolor="yellow", label=<17<BR/>hc_unit.activateh() after(0)>]
+  "S:E:Controller.getSense.11" [ style="filled", fillcolor="yellow", label=<18<BR/>heating_active = true>]
+  "S:E:Controller.getSense.12" [ label=<19<BR/>notifyer.notify() after(0)>]
+  "S:E:Controller.getSense.13" [ style="filled", fillcolor="yellow", label=<20<BR/>if (21 &lt;= temp &amp;&amp; heating_active == true)>]
+  "S:E:Controller.getSense.14" [ style="filled", fillcolor="yellow", label=<21<BR/>hc_unit.switchoff() after(0)>]
+  "S:E:Controller.getSense.15" [ style="filled", fillcolor="yellow", label=<22<BR/>heating_active = false>]
+  "S:E:Controller.getSense.16" [ label=<23<BR/>notifyer.notify() after(0)>]
+  "AP:S:E:Controller.getSense.12.1" [ label=<24<BR/>current_status__in = temp>]
+  "AP:S:E:Controller.getSense.16.1" [ label=<25<BR/>current_status__in = temp>]
+}
+
+subgraph "cluster_HC_Unit" {
+  label="2-heater$HC_Unit";
+
+  "C:HC_Unit" [ shape="ellipse", style="filled", fillcolor="yellow", label=<26<BR/>reactiveclass HC_Unit>]
+  "SV:HC_Unit.heater_on" [ label=<27<BR/>sv_heater_on>]
+  "E:HC_Unit.constructor" [ label=<28<BR/>HC_Unit()>]
+  "E:HC_Unit.activateh" [ style="filled", fillcolor="orange", label=<29<BR/>msgsrv HC_Unit.activateh>]
+  "E:HC_Unit.switchoff" [ style="filled", fillcolor="orange", label=<30<BR/>msgsrv HC_Unit.switchoff>]
+  "S:E:HC_Unit.activateh.28" [ style="filled", fillcolor="yellow", label=<31<BR/>room.regulate() after(0)>]
+  "S:E:HC_Unit.activateh.29" [ label=<32<BR/>heater_on = true>]
+  "S:E:HC_Unit.constructor.27" [ label=<33<BR/>heater_on = false>]
+  "S:E:HC_Unit.switchoff.30" [ style="filled", fillcolor="yellow", label=<34<BR/>room.regulate() after(0)>]
+  "S:E:HC_Unit.switchoff.31" [ label=<35<BR/>heater_on = false>]
+  "AP:S:E:HC_Unit.activateh.28.1" [ style="filled", fillcolor="yellow", label=<36<BR/>v_in = 1>]
+  "AP:S:E:HC_Unit.switchoff.30.1" [ style="filled", fillcolor="yellow", label=<37<BR/>v_in = 0>]
+}
+
+subgraph "cluster_Notifyer" {
+  label="2-heater$Notifyer";
+
+  "C:Notifyer" [ shape="ellipse", label=<38<BR/>reactiveclass Notifyer>]
+  "SV:Notifyer.current_status" [ label=<39<BR/>sv_current_status>]
+  "E:Notifyer.constructor" [ label=<40<BR/>Notifyer()>]
+  "E:Notifyer.notify" [ label=<41<BR/>msgsrv Notifyer.notify>]
+  "E:Notifyer.send_signal" [ label=<42<BR/>msgsrv Notifyer.send_signal>]
+  "FP:E:Notifyer.notify.current_status_" [ label=<43<BR/>current_status_ = current_status__in>]
+  "S:E:Notifyer.notify.32" [ label=<44<BR/>current_status = current_status_>]
+  "S:E:Notifyer.notify.33" [ label=<45<BR/>self.send_signal() after(3)>]
+}
+
+subgraph "cluster_Room" {
+  label="2-heater$Room";
+
+  "C:Room" [ shape="ellipse", style="filled", fillcolor="yellow", label=<46<BR/>reactiveclass Room>]
+  "SV:Room.temperature" [ style="filled", fillcolor="yellow", label=<47<BR/>sv_temperature>]
+  "SV:Room.outside_air_blowing" [ style="filled", fillcolor="yellow", label=<48<BR/>sv_outside_air_blowing>]
+  "SV:Room.regulation" [ style="filled", fillcolor="yellow", label=<49<BR/>sv_regulation>]
+  "E:Room.constructor" [ style="filled", fillcolor="yellow", label=<50<BR/>Room()>]
+  "E:Room.tempchange" [ style="filled", fillcolor="yellow", label=<51<BR/>msgsrv Room.tempchange>]
+  "E:Room.regulate" [ style="filled", fillcolor="yellow", label=<52<BR/>msgsrv Room.regulate>]
+  "FP:E:Room.regulate.v" [ style="filled", fillcolor="yellow", label=<53<BR/>v = v_in>]
+  "S:E:Room.constructor.17" [ style="filled", fillcolor="yellow", label=<54<BR/>temperature = 21>]
+  "S:E:Room.constructor.18" [ style="filled", fillcolor="yellow", label=<55<BR/>regulation = 0>]
+  "S:E:Room.constructor.19" [ label=<56<BR/>outside_air_blowing = 0>]
+  "S:E:Room.constructor.20" [ style="filled", fillcolor="yellow", label=<57<BR/>self.tempchange() after(0)>]
+  "S:E:Room.regulate.25" [ style="filled", fillcolor="yellow", label=<58<BR/>regulation = v>]
+  "S:E:Room.tempchange.21" [ style="filled", fillcolor="yellow", label=<59<BR/>outside_air_blowing = ?(1, 0)>]
+  "S:E:Room.tempchange.22" [ style="filled", fillcolor="yellow", label=<60<BR/>temperature = temperature - outside_air_blowing + regulation>]
+  "S:E:Room.tempchange.23" [ style="filled", fillcolor="yellow", label=<61<BR/>sensor.getTemp() after(0)>]
+  "S:E:Room.tempchange.24" [ style="filled", fillcolor="yellow", label=<62<BR/>self.tempchange() after(10)>]
+  "AP:S:E:Room.tempchange.23.1" [ style="filled", fillcolor="yellow", label=<63<BR/>temp_in = temperature>]
+}
+
+subgraph "cluster_Sensor" {
+  label="2-heater$Sensor";
+
+  "C:Sensor" [ shape="ellipse", style="filled", fillcolor="yellow", label=<64<BR/>reactiveclass Sensor>]
+  "E:Sensor.getTemp" [ style="filled", fillcolor="yellow", label=<65<BR/>msgsrv Sensor.getTemp>]
+  "FP:E:Sensor.getTemp.temp" [ style="filled", fillcolor="yellow", label=<66<BR/>temp = temp_in>]
+  "S:E:Sensor.getTemp.26" [ style="filled", fillcolor="yellow", label=<67<BR/>controller.getSense() after(0)>]
+  "AP:S:E:Sensor.getTemp.26.1" [ style="filled", fillcolor="yellow", label=<68<BR/>temp_in = temp>]
+}
+
+/* member dependence */
+"C:Controller" -> "SV:Controller.heating_active" [color="green"]
+"C:Controller" -> "SV:Controller.sensedValue" [color="green"]
+"C:Controller" -> "E:Controller.constructor" [color="green"]
+"C:Controller" -> "E:Controller.getSense" [color="green"]
+"C:HC_Unit" -> "SV:HC_Unit.heater_on" [color="green"]
+"C:HC_Unit" -> "E:HC_Unit.constructor" [color="green"]
+"C:HC_Unit" -> "E:HC_Unit.activateh" [color="green"]
+"C:HC_Unit" -> "E:HC_Unit.switchoff" [color="green"]
+"C:Notifyer" -> "SV:Notifyer.current_status" [color="green"]
+"C:Notifyer" -> "E:Notifyer.constructor" [color="green"]
+"C:Notifyer" -> "E:Notifyer.notify" [color="green"]
+"C:Notifyer" -> "E:Notifyer.send_signal" [color="green"]
+"C:Room" -> "SV:Room.temperature" [color="green"]
+"C:Room" -> "SV:Room.outside_air_blowing" [color="green"]
+"C:Room" -> "SV:Room.regulation" [color="green"]
+"C:Room" -> "E:Room.constructor" [color="green"]
+"C:Room" -> "E:Room.tempchange" [color="green"]
+"C:Room" -> "E:Room.regulate" [color="green"]
+"C:Sensor" -> "E:Sensor.getTemp" [color="green"]
+
+/* control dependence */
+"E:main" -> "S:main.1"
+"E:main" -> "S:main.2"
+"E:main" -> "S:main.3"
+"E:main" -> "S:main.4"
+"E:main" -> "S:main.5"
+"S:main.1" -> "C:Room"
+"S:main.2" -> "C:Controller"
+"S:main.3" -> "C:Sensor"
+"S:main.4" -> "C:HC_Unit"
+"S:main.5" -> "C:Notifyer"
+"E:Controller.constructor" -> "S:E:Controller.constructor.6"
+"E:Controller.constructor" -> "S:E:Controller.constructor.7"
+"E:Controller.getSense" -> "FP:E:Controller.getSense.temp"
+"E:Controller.getSense" -> "S:E:Controller.getSense.8"
+"E:Controller.getSense" -> "S:E:Controller.getSense.9"
+"S:E:Controller.getSense.9" -> "S:E:Controller.getSense.10"
+"S:E:Controller.getSense.9" -> "S:E:Controller.getSense.11"
+"S:E:Controller.getSense.9" -> "S:E:Controller.getSense.12"
+"S:E:Controller.getSense.9" -> "S:E:Controller.getSense.13"
+"S:E:Controller.getSense.12" -> "AP:S:E:Controller.getSense.12.1"
+"S:E:Controller.getSense.13" -> "S:E:Controller.getSense.14"
+"S:E:Controller.getSense.13" -> "S:E:Controller.getSense.15"
+"S:E:Controller.getSense.13" -> "S:E:Controller.getSense.16"
+"S:E:Controller.getSense.16" -> "AP:S:E:Controller.getSense.16.1"
+"E:HC_Unit.constructor" -> "S:E:HC_Unit.constructor.27"
+"E:HC_Unit.activateh" -> "S:E:HC_Unit.activateh.28"
+"E:HC_Unit.activateh" -> "S:E:HC_Unit.activateh.29"
+"E:HC_Unit.switchoff" -> "S:E:HC_Unit.switchoff.30"
+"E:HC_Unit.switchoff" -> "S:E:HC_Unit.switchoff.31"
+"S:E:HC_Unit.activateh.28" -> "AP:S:E:HC_Unit.activateh.28.1"
+"S:E:HC_Unit.switchoff.30" -> "AP:S:E:HC_Unit.switchoff.30.1"
+"E:Notifyer.notify" -> "FP:E:Notifyer.notify.current_status_"
+"E:Notifyer.notify" -> "S:E:Notifyer.notify.32"
+"E:Notifyer.notify" -> "S:E:Notifyer.notify.33"
+"E:Room.constructor" -> "S:E:Room.constructor.17"
+"E:Room.constructor" -> "S:E:Room.constructor.18"
+"E:Room.constructor" -> "S:E:Room.constructor.19"
+"E:Room.constructor" -> "S:E:Room.constructor.20"
+"E:Room.tempchange" -> "S:E:Room.tempchange.21"
+"E:Room.tempchange" -> "S:E:Room.tempchange.22"
+"E:Room.tempchange" -> "S:E:Room.tempchange.23"
+"E:Room.tempchange" -> "S:E:Room.tempchange.24"
+"E:Room.regulate" -> "FP:E:Room.regulate.v"
+"E:Room.regulate" -> "S:E:Room.regulate.25"
+"S:E:Room.tempchange.23" -> "AP:S:E:Room.tempchange.23.1"
+"E:Sensor.getTemp" -> "FP:E:Sensor.getTemp.temp"
+"E:Sensor.getTemp" -> "S:E:Sensor.getTemp.26"
+"S:E:Sensor.getTemp.26" -> "AP:S:E:Sensor.getTemp.26.1"
+
+/* data dependence */
+"FP:E:Controller.getSense.temp" -> "S:E:Controller.getSense.8" [color="blue"]
+"FP:E:Controller.getSense.temp" -> "S:E:Controller.getSense.9" [color="blue"]
+"FP:E:Controller.getSense.temp" -> "S:E:Controller.getSense.13" [color="blue"]
+"FP:E:Controller.getSense.temp" -> "AP:S:E:Controller.getSense.12.1" [color="blue"]
+"FP:E:Controller.getSense.temp" -> "AP:S:E:Controller.getSense.16.1" [color="blue"]
+"FP:E:Notifyer.notify.current_status_" -> "S:E:Notifyer.notify.32" [color="blue"]
+"FP:E:Room.regulate.v" -> "S:E:Room.regulate.25" [color="blue"]
+"S:E:Room.tempchange.21" -> "S:E:Room.tempchange.22" [color="blue"]
+"S:E:Room.tempchange.22" -> "AP:S:E:Room.tempchange.23.1" [color="blue"]
+"FP:E:Sensor.getTemp.temp" -> "AP:S:E:Sensor.getTemp.26.1" [color="blue"]
+
+/* intra-rebec dependence */
+"S:E:Controller.constructor.6" -> "S:E:Controller.getSense.9" [color="blue", style="dotted"]
+"S:E:Controller.constructor.6" -> "S:E:Controller.getSense.13" [color="blue", style="dotted"]
+"S:E:Controller.getSense.11" -> "S:E:Controller.getSense.9" [color="blue", style="dotted"]
+"S:E:Controller.getSense.11" -> "S:E:Controller.getSense.13" [color="blue", style="dotted"]
+"S:E:Controller.getSense.15" -> "S:E:Controller.getSense.9" [color="blue", style="dotted"]
+"S:E:Controller.getSense.15" -> "S:E:Controller.getSense.13" [color="blue", style="dotted"]
+"S:E:Room.constructor.17" -> "S:E:Room.tempchange.22" [color="blue", style="dotted"]
+"S:E:Room.constructor.18" -> "S:E:Room.tempchange.22" [color="blue", style="dotted"]
+"S:E:Room.regulate.25" -> "S:E:Room.tempchange.22" [color="blue", style="dotted"]
+"S:E:Room.tempchange.22" -> "S:E:Room.tempchange.22" [color="blue", style="dotted"]
+
+/* activation dependence */
+"S:E:Controller.getSense.10" -> "E:HC_Unit.activateh" [constraint=false]
+"S:E:Controller.getSense.12" -> "E:Notifyer.notify" [constraint=false]
+"S:E:Controller.getSense.14" -> "E:HC_Unit.switchoff" [constraint=false]
+"S:E:Controller.getSense.16" -> "E:Notifyer.notify" [constraint=false]
+"S:E:HC_Unit.activateh.28" -> "E:Room.regulate" [constraint=false]
+"S:E:HC_Unit.switchoff.30" -> "E:Room.regulate" [constraint=false]
+"S:E:Notifyer.notify.33" -> "E:Notifyer.send_signal" [constraint=false]
+"S:E:Room.constructor.20" -> "E:Room.tempchange" [constraint=false]
+"S:E:Room.tempchange.23" -> "E:Sensor.getTemp" [constraint=false]
+"S:E:Room.tempchange.24" -> "E:Room.tempchange" [constraint=false]
+"S:E:Sensor.getTemp.26" -> "E:Controller.getSense" [constraint=false]
+
+/* binding dependence */
+"AP:S:E:Controller.getSense.12.1" -> "FP:E:Notifyer.notify.current_status_" [color="purple", constraint=false]
+"AP:S:E:Controller.getSense.16.1" -> "FP:E:Notifyer.notify.current_status_" [color="purple", constraint=false]
+"AP:S:E:HC_Unit.activateh.28.1" -> "FP:E:Room.regulate.v" [color="purple", constraint=false]
+"AP:S:E:HC_Unit.switchoff.30.1" -> "FP:E:Room.regulate.v" [color="purple", constraint=false]
+"AP:S:E:Room.tempchange.23.1" -> "FP:E:Sensor.getTemp.temp" [color="purple", constraint=false]
+"AP:S:E:Sensor.getTemp.26.1" -> "FP:E:Controller.getSense.temp" [color="purple", constraint=false]
+
+subgraph "cluster_edge_legend" {
+  label="Dependency edges";
+
+  node [shape="plaintext"];
+  "legend_member_text" [label="member dependence"];
+  "legend_control_text" [label="control dependence"];
+  "legend_data_text" [label="data dependence"];
+  "legend_intra-rebec_text" [label="intra-rebec dependence"];
+  "legend_activation_text" [label="activation dependence"];
+  "legend_binding_text" [label="binding dependence"];
+
+  "legend_member_start" [shape="point", width=0.03, label=""];
+  "legend_member_end" [shape="point", width=0.03, label=""];
+  "legend_control_start" [shape="point", width=0.03, label=""];
+  "legend_control_end" [shape="point", width=0.03, label=""];
+  "legend_data_start" [shape="point", width=0.03, label=""];
+  "legend_data_end" [shape="point", width=0.03, label=""];
+  "legend_intra-rebec_start" [shape="point", width=0.03, label=""];
+  "legend_intra-rebec_end" [shape="point", width=0.03, label=""];
+  "legend_activation_start" [shape="point", width=0.03, label=""];
+  "legend_activation_end" [shape="point", width=0.03, label=""];
+  "legend_binding_start" [shape="point", width=0.03, label=""];
+  "legend_binding_end" [shape="point", width=0.03, label=""];
+
+  { rank=same; "legend_member_text"; "legend_member_start"; "legend_member_end"; }
+  { rank=same; "legend_control_text"; "legend_control_start"; "legend_control_end"; }
+  { rank=same; "legend_data_text"; "legend_data_start"; "legend_data_end"; }
+  { rank=same; "legend_intra-rebec_text"; "legend_intra-rebec_start"; "legend_intra-rebec_end"; }
+  { rank=same; "legend_activation_text"; "legend_activation_start"; "legend_activation_end"; }
+  { rank=same; "legend_binding_text"; "legend_binding_start"; "legend_binding_end"; }
+
+  "legend_member_start" -> "legend_member_end" [color="green"];
+  "legend_control_start" -> "legend_control_end";
+  "legend_data_start" -> "legend_data_end" [color="blue"];
+  "legend_intra-rebec_start" -> "legend_intra-rebec_end" [color="blue", style="dotted"];
+  "legend_activation_start" -> "legend_activation_end";
+  "legend_binding_start" -> "legend_binding_end" [color="purple"];
+
+  "legend_member_text" -> "legend_control_text" -> "legend_data_text" -> "legend_intra-rebec_text" -> "legend_activation_text" -> "legend_binding_text"
+    [style="invis"];
+}
+}
